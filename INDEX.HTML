@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Para Você ♡</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='.9em' font-size='54' x='4'%3E%E2%99%A1%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -292,7 +293,7 @@
 <button id="close-btn" onclick="close_scene()">Fechar</button>
 
 <!-- YouTube invisible -->
-<div id="yt"></div>
+<div id="yt" allow="autoplay"></div>
 
 <script>
 /* ── PARTICLES ── */
@@ -323,13 +324,35 @@ const TEXT = [
 ];
 
 /* ── YOUTUBE ── */
-let yt = null, ytReady = false;
+let yt = null, ytReady = false, playPending = false;
 
 window.onYouTubeIframeAPIReady = function() {
   yt = new YT.Player('yt', {
     videoId: 'LadRDA1BzmE',
-    playerVars: { autoplay: 0, controls: 0, playsinline: 1 },
-    events: { onReady: () => { ytReady = true; } }
+    playerVars: {
+      autoplay:       0,
+      controls:       0,
+      playsinline:    1,
+      mute:           0,
+      enablejsapi:    1,
+      origin:         window.location.origin,
+      rel:            0,
+      fs:             0
+    },
+    events: {
+      onReady: () => {
+        ytReady = true;
+        if (playPending) { playPending = false; tryPlay(); }
+      },
+      onError: (e) => {
+        // Video can't be embedded — open in new tab as fallback
+        console.warn('YT embed error', e.data);
+        if (playPending) {
+          playPending = false;
+          window.open('https://www.youtube.com/watch?v=LadRDA1BzmE', '_blank');
+        }
+      }
+    }
   });
 };
 
@@ -339,11 +362,20 @@ window.onYouTubeIframeAPIReady = function() {
   document.head.appendChild(s);
 })();
 
+function tryPlay() {
+  try { yt.playVideo(); } catch(e) { console.warn('playVideo error', e); }
+}
+
 function play() {
-  if (ytReady && yt) { try { yt.playVideo(); } catch(e) {} }
+  if (ytReady && yt) {
+    tryPlay();
+  } else {
+    playPending = true;
+  }
 }
 
 function stop() {
+  playPending = false;
   if (ytReady && yt) { try { yt.stopVideo(); } catch(e) {} }
 }
 
