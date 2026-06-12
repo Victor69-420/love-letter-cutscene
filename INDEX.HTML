@@ -329,15 +329,14 @@ let yt = null, ytReady = false, playPending = false;
 window.onYouTubeIframeAPIReady = function() {
   yt = new YT.Player('yt', {
     videoId: 'LadRDA1BzmE',
+    host: 'https://www.youtube-nocookie.com',
     playerVars: {
-      autoplay:       0,
-      controls:       0,
-      playsinline:    1,
-      mute:           0,
-      enablejsapi:    1,
-      origin:         window.location.origin,
-      rel:            0,
-      fs:             0
+      autoplay:    0,
+      controls:    0,
+      playsinline: 1,
+      mute:        0,
+      rel:         0,
+      fs:          0
     },
     events: {
       onReady: () => {
@@ -345,12 +344,7 @@ window.onYouTubeIframeAPIReady = function() {
         if (playPending) { playPending = false; tryPlay(); }
       },
       onError: (e) => {
-        // Video can't be embedded — open in new tab as fallback
         console.warn('YT embed error', e.data);
-        if (playPending) {
-          playPending = false;
-          window.open('https://www.youtube.com/watch?v=LadRDA1BzmE', '_blank');
-        }
       }
     }
   });
