@@ -128,6 +128,82 @@
     transition: color 0.5s, opacity 0.8s; z-index: 60;
   }
   #close-btn.show { opacity: 1; pointer-events: all; }
+
+  /* ── CENA FINAL: EU TE AMO EM VÁRIAS LÍNGUAS ── */
+  #scene-final {
+    position: fixed; inset: 0; z-index: 40;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 2.2s ease;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 45%, rgba(120, 50, 45, 0.22), transparent 70%),
+      var(--bg);
+    overflow: hidden;
+  }
+  #scene-final.show { opacity: 1; pointer-events: all; }
+  .final-glow {
+    position: absolute; width: 480px; height: 480px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201, 106, 90, 0.16), transparent 72%);
+    filter: blur(10px);
+    animation: glow-breathe 5.5s ease-in-out infinite;
+  }
+  @keyframes glow-breathe {
+    0%, 100% { transform: scale(0.92); opacity: 0.7; }
+    50%      { transform: scale(1.08); opacity: 1; }
+  }
+  .final-heart {
+    position: relative;
+    font-size: 30px; line-height: 1;
+    margin-bottom: 44px;
+    color: var(--rose-lt);
+    filter: drop-shadow(0 0 22px rgba(200, 80, 70, 0.45));
+    animation: heartbeat 2.4s ease-in-out infinite;
+    user-select: none;
+  }
+  .final-word {
+    position: relative;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(30px, 6.5vw, 56px);
+    color: var(--cream);
+    text-align: center;
+    padding: 0 24px;
+    letter-spacing: 0.5px;
+    min-height: 1.3em;
+    text-shadow: 0 0 40px rgba(220, 140, 120, 0.25);
+  }
+  .final-word .fw-lang {
+    display: inline-block;
+    animation: fw-fade 0.5s ease;
+  }
+  @keyframes fw-fade {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.97); filter: blur(4px); }
+    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  }
+  .final-caption {
+    position: relative;
+    margin-top: 30px;
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: 14px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    transition: opacity 1.6s ease;
+  }
+  .final-caption.show { opacity: 1; }
+  #final-close-btn {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    background: transparent; border: none; color: rgba(255, 180, 160, 0.3);
+    font-family: 'Playfair Display', serif; font-size: 11px;
+    letter-spacing: 4px; text-transform: uppercase;
+    cursor: pointer; opacity: 0; pointer-events: none;
+    transition: color 0.5s, opacity 0.8s; z-index: 60;
+  }
+  #final-close-btn.show { opacity: 1; pointer-events: all; }
+  #final-close-btn:hover { color: rgba(255, 200, 180, 0.8); }
   #close-btn:hover { color: rgba(255, 200, 180, 0.8); }
 </style>
 </head>
@@ -168,7 +244,16 @@
   </div>
 </section>
 
-<button id="close-btn" onclick="close_scene()">Fechar</button>
+<button id="close-btn" onclick="go_to_final()">Continuar</button>
+
+<section id="scene-final" aria-live="polite">
+  <div class="final-glow"></div>
+  <div class="final-heart">♡</div>
+  <div class="final-word" id="final-word"></div>
+  <p class="final-caption" id="final-caption">eu te amo</p>
+</section>
+
+<button id="final-close-btn" onclick="close_scene()">Fechar</button>
 
 <script>
 /* ── PARTICLES ── */
@@ -196,6 +281,43 @@ const TEXT = [
   "Não foi a beleza que me conquistou primeiro. Foi aquela forma única que você tem de existir — delicada e intensa ao mesmo tempo, como a luz da tarde que entra pelas janelas e pinta tudo de dourado.",
   "Eu poderia tentar te explicar com versos, com músicas, com todas as metáforas que os poetas já inventaram. Mas nenhuma delas seria suficiente. Você é maior do que qualquer palavra que eu conheça.",
   "E então prefiro simplesmente dizer, sem floreios: eu te amo. Com a mesma certeza que tenho de que o sol vai nascer amanhã — e com a mesma leveza de quem finalmente encontrou onde pertence."
+];
+
+/* ── EU TE AMO EM VÁRIAS LÍNGUAS ── */
+const I_LOVE_YOU = [
+  "I love you",            // inglês
+  "Je t'aime",             // francês
+  "Te amo",                // espanhol
+  "Ich liebe dich",        // alemão
+  "Ti amo",                // italiano
+  "Я тебя люблю",          // russo
+  "我爱你",                 // chinês
+  "私はあなたを愛しています", // japonês
+  "나는 너를 사랑해",         // coreano
+  "أنا أحبك",              // árabe
+  "Σ' αγαπώ",              // grego
+  "Jag älskar dig",        // sueco
+  "Ik hou van je",         // holandês
+  "Kocham cię",            // polonês
+  "Seni seviyorum",        // turco
+  "Eu te amo",             // português (Brasil) — primeira passagem
+  "Te quiero",             // espanhol (variante)
+  "Mahal kita",            // tagalo/filipino
+  "Anh yêu em",            // vietnamita
+  "אני אוהב אותך",         // hebraico
+  "Volim te",              // croata
+  "Szeretlek",             // húngaro
+  "Te iubesc",             // romeno
+  "Miluji tě",             // tcheco
+  "Minä rakastan sinua",   // finlandês
+  "Jeg elsker dig",        // dinamarquês
+  "Jeg elsker deg",        // norueguês
+  "Ek het jou lief",       // africâner
+  "Nakupenda",             // suaíli
+  "मैं तुमसे प्यार करता हूँ", // hindi
+  "Tôi yêu em",            // vietnamita (variante)
+  "ฉันรักคุณ",              // tailandês
+  "Eu te amo"              // português — pousagem final
 ];
 
 /* ── ÁUDIO ── */
@@ -272,6 +394,11 @@ async function close_scene() {
 
   stop();
 
+  $('scene-final').classList.remove('show');
+  $('final-close-btn').classList.remove('show');
+  $('final-word').innerHTML = '';
+  $('final-caption').classList.remove('show');
+
   $('scene-letter').classList.remove('show');
   $('close-btn').classList.remove('show');
   $('paras').innerHTML = '';
@@ -289,6 +416,65 @@ async function close_scene() {
   curtain.classList.remove('show');
   await wait(1300);
   $('btn-start').disabled = false;
+}
+
+/* ── TRANSIÇÃO PARA A CENA FINAL ── */
+async function go_to_final() {
+  $('close-btn').classList.remove('show');
+
+  const curtain = $('curtain');
+  curtain.style.transition = 'opacity 1.1s ease';
+  curtain.classList.add('show');
+  await wait(1200);
+
+  $('scene-letter').classList.remove('show');
+
+  const finalScene = $('scene-final');
+  finalScene.classList.add('show');
+
+  curtain.style.transition = 'opacity 1.6s ease';
+  curtain.classList.remove('show');
+  await wait(900);
+
+  runLanguageCycle();
+}
+
+/* ── CICLO DE IDIOMAS: rápido → desacelerando → pousa em "Eu te amo" ── */
+function runLanguageCycle() {
+  const wordEl = $('final-word');
+  const caption = $('final-caption');
+  const n = I_LOVE_YOU.length;
+
+  // gera os atrasos (delays) entre trocas: começa rápido e vai desacelerando
+  const delays = [];
+  let d = 90;
+  for (let i = 0; i < n - 1; i++) {
+    delays.push(d);
+    d = Math.min(d * 1.16, 850); // desaceleração progressiva, com teto
+  }
+  delays.push(1100); // pausa final maior antes de pousar em português
+
+  let i = 0;
+  function showWord(text) {
+    wordEl.innerHTML = `<span class="fw-lang">${text}</span>`;
+  }
+
+  function step() {
+    showWord(I_LOVE_YOU[i]);
+    if (i < n - 1) {
+      const delay = delays[i];
+      i++;
+      setTimeout(step, delay);
+    } else {
+      // chegou em "Eu te amo" — pousagem final
+      setTimeout(async () => {
+        caption.classList.add('show');
+        await wait(1600);
+        $('final-close-btn').classList.add('show');
+      }, 200);
+    }
+  }
+  step();
 }
 </script>
 </body>
